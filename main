@@ -1,0 +1,73 @@
+Dim cellI, cellJ As Integer
+Private Sub NewTableButton_Click()
+
+     ActiveDocument.Content.Select
+     Selection.Delete
+     ActiveDocument.Tables.Add Range:=Selection.Range, NumRows:=CInt(TableSizeTextBox.Text), NumColumns:= _
+        CInt(TableSizeTextBox.Text), DefaultTableBehavior:=wdWord9TableBehavior, AutoFitBehavior:= _
+        wdAutoFitFixed
+        
+End Sub
+Private Sub AddNumberButton_Click()
+
+    If cellI = 0 Or cellJ = 0 Then
+        cellI = 1
+        cellJ = 1
+        ActiveDocument.Tables(1).Rows(cellI).Cells(cellJ).Shading.BackgroundPatternColor = wdColorRed
+        Exit Sub
+    Else
+        ActiveDocument.Tables(1).Rows(cellI).Cells(cellJ).Shading.BackgroundPatternColor = wdColorWhite
+        ActiveDocument.Tables(1).Rows(cellI).Cells(cellJ).Range.Text = AddNumberTextBox.Text
+        cellJ = cellJ + 1
+        If cellJ > ActiveDocument.Tables(1).Columns.Count Then
+            cellJ = 1
+            cellI = cellI + 1
+        End If
+        AddNumberTextBox.Text = ""
+        If cellI = ActiveDocument.Tables(1).Rows.Count + 1 And cellJ = 1 Then
+            cellI = 0
+            cellJ = 0
+        Else
+            ActiveDocument.Tables(1).Rows(cellI).Cells(cellJ).Shading.BackgroundPatternColor = wdColorRed
+        End If
+        AddNumberTextBox.SetFocus
+    End If
+    
+End Sub
+Private Sub GetColumnSum_Click()
+
+    SumComboBox.Clear
+    Dim s As Integer
+    For j = 1 To ActiveDocument.Tables(1).Columns.Count
+        For i = 1 To ActiveDocument.Tables(1).Rows.Count
+            s = s + CInt(Split(CStr(ActiveDocument.Tables(1).Rows(i).Cells(j).Range.Text), Chr(13))(0))
+        Next i
+        SumComboBox.AddItem (s)
+        s = 0
+    Next j
+    
+End Sub
+Private Sub AddRandomValues_Click()
+
+    cellI = 1
+    cellJ = 1
+    Randomize
+    For i = 1 To ActiveDocument.Tables(1).Rows.Count
+        For j = 1 To ActiveDocument.Tables(1).Columns.Count
+            ActiveDocument.Tables(1).Rows(i).Cells(j).Range.Text = CInt(Rnd * 100)
+        Next j
+    Next i
+    
+End Sub
+Private Sub RemoveAllValues_Click()
+
+     For i = 1 To ActiveDocument.Tables(1).Rows.Count
+        For j = 1 To ActiveDocument.Tables(1).Columns.Count
+            ActiveDocument.Tables(1).Rows(i).Cells(j).Range.Text = ""
+            ActiveDocument.Tables(1).Rows(i).Cells(j).Range.Cells(1).Shading.BackgroundPatternColor = wdColorGray20
+        Next j
+    Next i
+    cellI = 0
+    cellJ = 0
+    
+End Sub
